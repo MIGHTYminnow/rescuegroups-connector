@@ -12,6 +12,14 @@
  * 
  */
 
+if ( ! function_exists( 'rgconnector_cron' ) ) {
+	function rgconnector_cron( $url ) {
+		$request = file_get_contents( $url );
+	}
+	add_action( 'rgconnector_import_trigger', 'rgconnector_cron' );
+	add_action( 'rgconnector_import_processing', 'rgconnector_cron' );
+}
+
 if ( ! isset( $_GET['rgconnector'] ) ) {
 	return;
 }
@@ -168,7 +176,7 @@ $data = array(
 	"objectAction" => "publicSearch",
 	"search" => array (
 		"resultStart" => 0,
-		"resultLimit" => 3,
+		"resultLimit" => 1000,
 		"resultSort" => "animalID",
 		"resultOrder" => "desc",
 		"calcFoundRows" => "Yes",
