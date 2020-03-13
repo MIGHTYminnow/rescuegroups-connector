@@ -14,7 +14,15 @@
 
 if ( ! function_exists( 'rgconnector_cron' ) ) {
 	function rgconnector_cron( $url ) {
-		$request = file_get_contents( $url );
+		$response = wp_remote_get( $url, array(
+			'timeout' => 360,
+		) );
+		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+			error_log( 'CRON LOG SUCCESS: ' . $response['body'] );
+		} else {
+			error_log( 'CRON LOG ERROR: ' . $response['body'] );
+		}
+		exit;
 	}
 	add_action( 'rgconnector_import_trigger', 'rgconnector_cron' );
 	add_action( 'rgconnector_import_processing', 'rgconnector_cron' );
@@ -176,8 +184,8 @@ $data = array(
 	"objectAction" => "publicSearch",
 	"search" => array (
 		"resultStart" => 0,
-		"resultLimit" => 1000,
-		"resultSort" => "animalID",
+		"resultLimit" => 150,
+		"resultSort" => "animalUpdatedDate",
 		"resultOrder" => "desc",
 		"calcFoundRows" => "Yes",
 		"filters" => array(
@@ -202,7 +210,6 @@ $data = array(
 		"fields" => $filter_fields,
 	),
 );
-
 $jsonData = json_encode($data);
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
@@ -217,6 +224,11 @@ if (curl_errno($ch)) {
 	curl_close($ch);
 	$results = $result;
 }
+$results = json_decode( $results );
+foreach ( $results->data as $key => $animal ) {
+	$results->data->{$key}->animalDescription = '';
+}
+
 header('Content-Type: application/json');
-echo $results;
+echo json_encode( $results->data );
 exit;
