@@ -189,13 +189,6 @@ $data = array(
 		"resultOrder" => "desc",
 		"calcFoundRows" => "Yes",
 		"filters" => array(
-			/*
-            array(
-                "fieldName" => "animalStatus",
-                "operation" => "equal",
-                "criteria" => "Available",
-            ),
-			*/
 			array(
 				"fieldName" => "animalSpecies",
 				"operation" => "equals",
