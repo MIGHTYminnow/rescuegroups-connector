@@ -219,7 +219,6 @@ if (curl_errno($ch)) {
 }
 $results = json_decode( $results );
 foreach ( $results->data as $key => $animal ) {
-	$results->data->{$key}->animalDescription = '';
 	$results->data->{$key}->animalUpdatedTime = strtotime( $results->data->{$key}->animalUpdatedDate );
 }
 
