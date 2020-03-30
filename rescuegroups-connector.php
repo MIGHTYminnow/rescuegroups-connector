@@ -202,9 +202,9 @@ $data = array(
 				"criteria" => "cat",
 			),
 			array(
-				"fieldName" => "animalLocationCitystate",
+				"fieldName" => "animalOrgID",
 				"operation" => "equals",
-				"criteria" => "Oakland, CA",
+				"criteria" => "6030",
 			),
 		),
 		"fields" => $filter_fields,
