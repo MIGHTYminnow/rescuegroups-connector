@@ -34,10 +34,32 @@ if ( ! isset( $_GET['rgconnector'] ) ) {
 	return;
 }
 
+/** Login */
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+curl_setopt($ch, CURLOPT_URL, "https://api.rescuegroups.org/http/v2.json");
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode( array(
+	'username' => 'kristin',
+	'password' => 'KWXPFX',
+	'accountNumber' => '6030',
+	'action' => 'login',
+)));
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$result = curl_exec($ch);
+if (curl_errno($ch)) {
+	$results = curl_error($ch);
+} else {
+	curl_close($ch);
+	$results = $result;
+}
+$results = json_decode( $results );
+$login = $results->data;
+
 /** List Fields */
 $fields = array(
 	'animalID' => 'ID (key)',
-	'animalOrgID' => 'Org ID (key)',
+//	'animalOrgID' => 'Org ID (key)',
 	'animalActivityLevel' => 'Activity level (string from values list)',
 	'animalAdoptionFee' => 'Adoption fee (string)',
 	'animalAltered' => 'Altered (string from values list)',
@@ -69,9 +91,9 @@ $fields = array(
 	'animalIndoorOutdoor' => 'Indoor/Outdoor (string from values list)',
 	'animalKillDate' => 'Euthanasia date (date)',
 	'animalKillReason' => 'Euthanasia reason (string from values list)',
-	'animalLocation' => 'Location (postalcode)',
-	'animalLocationDistance' => 'Distance (int)',
-	'animalLocationCitystate' => 'Distance (int)',
+//	'animalLocation' => 'Location (postalcode)',
+//	'animalLocationDistance' => 'Distance (int)',
+//	'animalLocationCitystate' => 'Distance (int)',
 	'animalMicrochipped' => 'Microchipped (string from values list)',
 	'animalMixedBreed' => 'Mixed breed (string from values list)',
 	'animalName' => 'Name (string)',
@@ -92,7 +114,7 @@ $fields = array(
 	'animalPrimaryBreed' => 'Primary breed (string)',
 	'animalPrimaryBreedID' => 'Primary breed ID (key)',
 	'animalRescueID' => 'Rescue ID (string)',
-	'animalSearchString' => 'Search (string)',
+//	'animalSearchString' => 'Search (string)',
 	'animalSecondaryBreed' => 'Secondary Breed (string)',
 	'animalSecondaryBreedID' => 'Secondary Breed ID (key)',
 	'animalSex' => 'Sex (string from values list)',
@@ -110,10 +132,10 @@ $fields = array(
 	'animalStatusID' => 'Status ID (key)',
 	'animalSummary' => 'Summary (string)',
 	'animalTailType' => 'Tail type (string from values list)',
-	'animalThumbnailUrl' => 'Thumbnail URL (string)',
+//	'animalThumbnailUrl' => 'Thumbnail URL (string)',
 	'animalUptodate' => 'Up-to-date (string from values list)',
 	'animalUpdatedDate' => 'Last updated (date)',
-	'animalUrl' => 'Web page (url)',
+//	'animalUrl' => 'Web page (url)',
 	'animalVocal' => 'Likes to vocalize (string from values list)',
 	'animalYardRequired' => 'Requires a Yard (string from values list)',
 	'animalAffectionate' => 'Affectionate (string from values list)',
@@ -181,9 +203,11 @@ foreach ( $fields as $key => $text ) {
 
 /** Format Query */
 $data = array(
-	"apikey" => sanitize_text_field( $_GET['rgconnector'] ),
+	'token' => $login->token,
+	'tokenHash' => $login->tokenHash,
+	//"apikey" => sanitize_text_field( $_GET['rgconnector'] ),
 	"objectType" => "animals",
-	"objectAction" => "publicSearch",
+	"objectAction" => "search",
 	"search" => array (
 		"resultStart" => 0,
 		"resultLimit" => ( isset( $_GET['rg_limit'] ) ) ? $_GET['rg_limit'] : 100,
@@ -195,11 +219,6 @@ $data = array(
 				"fieldName" => "animalSpecies",
 				"operation" => "equals",
 				"criteria" => "cat",
-			),
-			array(
-				"fieldName" => "animalOrgID",
-				"operation" => "equals",
-				"criteria" => "6030",
 			),
 		),
 		"fields" => $filter_fields,
@@ -240,6 +259,21 @@ if (curl_errno($ch)) {
 	$results = $result;
 }
 $results = json_decode( $results );
+
+		/*
+		 * Temporal snippet that help us to list the fields that are
+		 * valid on publicSearch but invalid on search.
+		 * 
+		foreach ( $results->data as $row ) {
+			foreach( $fields as $key => $desc ) {
+				if ( ! isset( $row->{$key} ) ) {
+					echo $key.'<br>';
+				}
+			}
+			exit;
+		}
+		exit;
+		*/
 
 /** Add aditional formatted fields. */
 foreach ( $results->data as $key => $animal ) {
