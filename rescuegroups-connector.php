@@ -12,6 +12,7 @@
  * 
  */
 
+/** Cronjob Stuff */
 if ( ! function_exists( 'rgconnector_cron' ) ) {
 	function rgconnector_cron( $url ) {
 		$response = wp_remote_get( $url, array(
@@ -28,10 +29,12 @@ if ( ! function_exists( 'rgconnector_cron' ) ) {
 	add_action( 'rgconnector_import_processing', 'rgconnector_cron' );
 }
 
+/** Is it an RGConnector Request? */
 if ( ! isset( $_GET['rgconnector'] ) ) {
 	return;
 }
 
+/** List Fields */
 $fields = array(
 	'animalID' => 'ID (key)',
 	'animalOrgID' => 'Org ID (key)',
@@ -171,13 +174,12 @@ $fields = array(
 	'animalVideos' => 'Videos (string)',
 	'animalVideoUrls' => 'Video URLs (string)',
 );
-
 $filter_fields = array();
-
 foreach ( $fields as $key => $text ) {
 	$filter_fields[] = $key;
 }
 
+/** Format Query */
 $data = array(
 	"apikey" => sanitize_text_field( $_GET['rgconnector'] ),
 	"objectType" => "animals",
@@ -204,6 +206,7 @@ $data = array(
 	),
 );
 
+/** Filter to Garden Cats only? */
 if ( isset( $_GET['garden'] ) ) {
 	$data['search']['filters'][] = array(
 		"fieldName" => "animalStatus",
@@ -211,6 +214,8 @@ if ( isset( $_GET['garden'] ) ) {
 		"criteria" => "Free Roaming",
 	);
 }
+
+/** Filter to a specific Cat? */
 if ( isset( $_GET['animalID'] ) ) {
 	$data['search']['filters'][] = array(
 		"fieldName" => "animalID",
@@ -219,6 +224,7 @@ if ( isset( $_GET['animalID'] ) ) {
 	);
 }
 
+/** Do API Call */
 $jsonData = json_encode($data);
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
@@ -234,6 +240,8 @@ if (curl_errno($ch)) {
 	$results = $result;
 }
 $results = json_decode( $results );
+
+/** Add aditional formatted fields. */
 foreach ( $results->data as $key => $animal ) {
 	$results->data->{$key}->animalUpdatedTime = strtotime( $results->data->{$key}->animalUpdatedDate );
 	$results->data->{$key}->animalVideoUrlsSerialized = maybe_serialize( $results->data->{$key}->animalVideoUrls );
