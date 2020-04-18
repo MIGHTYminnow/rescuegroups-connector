@@ -260,21 +260,6 @@ if (curl_errno($ch)) {
 }
 $results = json_decode( $results );
 
-		/*
-		 * Temporal snippet that help us to list the fields that are
-		 * valid on publicSearch but invalid on search.
-		 * 
-		foreach ( $results->data as $row ) {
-			foreach( $fields as $key => $desc ) {
-				if ( ! isset( $row->{$key} ) ) {
-					echo $key.'<br>';
-				}
-			}
-			exit;
-		}
-		exit;
-		*/
-
 /** Add aditional formatted fields. */
 foreach ( $results->data as $key => $animal ) {
 	$results->data->{$key}->animalUpdatedTime = strtotime( $results->data->{$key}->animalUpdatedDate );
