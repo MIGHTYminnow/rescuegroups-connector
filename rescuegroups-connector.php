@@ -239,6 +239,10 @@ foreach ( $results->data as $key => $animal ) {
 	$results->data->{$key}->animalVideoUrlsSerialized = maybe_serialize( $results->data->{$key}->animalVideoUrls );
 }
 
+/** Print results only (no search results information) */
+$results = $results->data;
+
+/** Print JSON */
 header('Content-Type: application/json');
-echo json_encode( $results->data );
+echo json_encode( $results );
 exit;
