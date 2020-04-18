@@ -203,6 +203,22 @@ $data = array(
 		"fields" => $filter_fields,
 	),
 );
+
+if ( isset( $_GET['garden'] ) ) {
+	$data['search']['filters'][] = array(
+		"fieldName" => "animalStatus",
+		"operation" => "equals",
+		"criteria" => "Free Roaming",
+	);
+}
+if ( isset( $_GET['animalID'] ) ) {
+	$data['search']['filters'][] = array(
+		"fieldName" => "animalID",
+		"operation" => "equals",
+		"criteria" => $_GET['animalID'],
+	);
+}
+
 $jsonData = json_encode($data);
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
@@ -220,6 +236,7 @@ if (curl_errno($ch)) {
 $results = json_decode( $results );
 foreach ( $results->data as $key => $animal ) {
 	$results->data->{$key}->animalUpdatedTime = strtotime( $results->data->{$key}->animalUpdatedDate );
+	$results->data->{$key}->animalVideoUrlsSerialized = maybe_serialize( $results->data->{$key}->animalVideoUrls );
 }
 
 header('Content-Type: application/json');
