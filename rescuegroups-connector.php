@@ -280,7 +280,12 @@ $results = json_decode( $results );
 /** Add aditional formatted fields. */
 foreach ( $results->data as $key => $animal ) {
 	$results->data->{$key}->animalUpdatedTime = strtotime( $results->data->{$key}->animalUpdatedDate );
-	$results->data->{$key}->animalVideoUrlsSerialized = maybe_serialize( $results->data->{$key}->animalVideoUrls );
+
+	$videos = array();
+	foreach ( $results->data->{$key}->animalVideoUrls as $video ) {
+		$videos[] = (array) $video;
+	}
+	$results->data->{$key}->animalVideoUrlsSerialized = maybe_serialize( $videos );
 }
 
 /** Debug? (Show additional search information or results only). */
