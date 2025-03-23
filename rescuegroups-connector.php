@@ -46,6 +46,7 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode( array(
 )));
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 $result = curl_exec($ch);
 if (curl_errno($ch)) {
 	$results = curl_error($ch);
@@ -251,6 +252,7 @@ curl_setopt($ch, CURLOPT_URL, "https://api.rescuegroups.org/http/v2.json");
 curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 $result = curl_exec($ch);
 if (curl_errno($ch)) {
 	$results = curl_error($ch);
@@ -259,6 +261,21 @@ if (curl_errno($ch)) {
 	$results = $result;
 }
 $results = json_decode( $results );
+
+		/*
+		 * Temporal snippet that help us to list the fields that are
+		 * valid on publicSearch but invalid on search.
+		 * 
+		foreach ( $results->data as $row ) {
+			foreach( $fields as $key => $desc ) {
+				if ( ! isset( $row->{$key} ) ) {
+					echo $key.'<br>';
+				}
+			}
+			exit;
+		}
+		exit;
+		*/
 
 /** Add aditional formatted fields. */
 foreach ( $results->data as $key => $animal ) {
