@@ -3,7 +3,7 @@
  * Plugin Name: RescueGroups Connector
  * Plugin URI: https://github.com/aebs90/mm-rescuegroups-connector
  * Description: Connects to the RescueGroups HTTP API (v2) and returns a JSON response that can be used with WP All Import.
- * Version: 1.0.0-alpha
+ * Version: 1.0.0
  * Requires at least: 5.3
  * Requires PHP: 7.3
  * Author: MIGHTYminnow, aebs90
